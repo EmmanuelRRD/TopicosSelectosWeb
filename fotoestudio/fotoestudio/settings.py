@@ -80,8 +80,15 @@ WSGI_APPLICATION = 'fotoestudio.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'fotoestudio', # Crea la base de datos primero en MySQL Workbench o consola
+        'USER': 'adminfotoestudio',            # Tu usuario de MySQL
+        'PASSWORD': 'fotoestudio', # Tu contraseña de MySQL local
+        'HOST': 'localhost',
+        'PORT': '3307',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
