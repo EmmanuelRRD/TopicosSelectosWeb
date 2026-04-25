@@ -1,16 +1,14 @@
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import NotFound from './pages/NotFound';
+
 function App() {
   return (
-    <div className="bg-black min-h-screen flex items-center justify-center">
-      <div className="bg-blue-600 p-10 rounded-2xl shadow-2xl">
-        <h1 className="text-4xl font-black text-white uppercase tracking-widest">
-          📸 Fotoestudio Pro
-        </h1>
-        <p className="text-blue-100 mt-2 text-center font-bold">
-          Tailwind v4 está activo
-        </p>
-      </div>
-    </div>
-  )
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
