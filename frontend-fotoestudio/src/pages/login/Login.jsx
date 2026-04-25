@@ -58,6 +58,10 @@ function Login() {
           <div className="mt-8 text-center text-sm text-zinc-500">
             <p>¿Olvidaste tu acceso? Contacta al administrador de Sistemas.</p>
           </div>
+
+          <div className="mt-8 text-center text-sm text-zinc-500">
+            <p>No tienes cuenta? <a href="/#/Register" className="text-white">Crea una.</a></p>
+          </div>
         </div>
 
         {/* Botón para volver */}
