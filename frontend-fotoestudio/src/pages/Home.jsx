@@ -18,7 +18,7 @@ function Home() {
           </div>
 
           <button className="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-blue-500 hover:text-white transition-all cursor-pointer">
-            Agendar cita
+            <a href="/#/Login">Agendar cita</a>
           </button>
         </div>
       </nav>
