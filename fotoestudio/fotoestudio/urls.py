@@ -22,6 +22,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #Landin
     
-    path('', TemplateView.as_view(template_name="lp.html"), name='listar'),
-    path('ax/', TemplateView.as_view(template_name="ax.html"), name='listar'),
 ]
