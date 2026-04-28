@@ -10,5 +10,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     
     # 2. Endpoints de la API
-    path('api/', include(router.urls)), 
+    path('api/', include(router.urls)),
+    
+    
+    
+    
 ]
