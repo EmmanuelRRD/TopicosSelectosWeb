@@ -8,7 +8,6 @@ class Usuario(AbstractUser):
         ('cliente', 'Cliente'),
     ]
     
-    # Opciones para el sexo
     SEXO_CHOICES = [
         ('M', 'Masculino'),
         ('F', 'Femenino'),
@@ -22,17 +21,17 @@ class Usuario(AbstractUser):
         default='cliente'
     )
     
-    # Campo de Correo Obligatorio y único
     email = models.EmailField(unique=True)
 
-    # --- NUEVOS CAMPOS ---
-    fecha_nacimiento = models.DateField(null=False)
+    # Permitimos null y blank para que el comando createsuperuser no truene
+    fecha_nacimiento = models.DateField(null=True, blank=True) 
     
-    # Usamos choices igual que con el tipo de usuario
     sexo = models.CharField(
         max_length=1, 
         choices=SEXO_CHOICES, 
-        default='N'
+        default='N',
+        null=True, 
+        blank=True
     )
 
     def __str__(self):
