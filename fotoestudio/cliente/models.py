@@ -33,6 +33,13 @@ class Cita(models.Model):
         return f"Cita {self.id} - {self.cliente.username} ({self.fecha_cita.date()})"
 
     def save(self, *args, **kwargs):
+        if not self.precio_total and self.paquete:
+            self.precio_total = self.paquete.precio_paquete
+            
+        # Lógica de pago automático
         if self.abono >= self.precio_total:
             self.pagado = True
-        super().save(*args, **kwargs)   
+        else:
+            self.pagado = False # Por si bajan el abono después
+            
+        super().save(*args, **kwargs)

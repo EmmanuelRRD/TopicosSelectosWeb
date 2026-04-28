@@ -6,6 +6,6 @@ class CitaSerializer(serializers.ModelSerializer):
     cliente_nombre = serializers.ReadOnlyField(source='cliente.username')
     paquete_nombre = serializers.ReadOnlyField(source='paquete.nombre')
 
-    class Meta (serializers.ModelSerializer):
+    class Meta:
         model = Cita
         fields = '__all__' # O puedes enlistar: ['id', 'cliente', 'paquete', 'fecha_cita', 'precio_total', 'pagado']
