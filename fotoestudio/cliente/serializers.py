@@ -1,11 +1,23 @@
 from rest_framework import serializers
 from .models import Cita
+from fotografo.models import Paquete
+from login.models import Usuario
+
+class PaqueteSerializer(serializers.ModelSerializer): # Mostrar los paquetes
+    class Meta:
+        model = Paquete
+        fields = ['id', 'nombre','precio_paquete'] #Los datos que se quieren mostrar
 
 class CitaSerializer(serializers.ModelSerializer):
-    # Esto mostrará el nombre del cliente y del paquete en lugar de solo el ID
     cliente_nombre = serializers.ReadOnlyField(source='cliente.username')
     paquete_nombre = serializers.ReadOnlyField(source='paquete.nombre')
 
     class Meta:
         model = Cita
-        fields = '__all__' # O puedes enlistar: ['id', 'cliente', 'paquete', 'fecha_cita', 'precio_total', 'pagado']
+        fields = '__all__'
+
+class FotografoSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Usuario
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'tipo_usuario']
