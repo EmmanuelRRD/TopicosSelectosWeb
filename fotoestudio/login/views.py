@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
-from .serializers import LoginCheck
+from .serializers import LoginCheck, NewUser
 
 class LoginView(APIView):
     def post(self, request):
@@ -23,9 +23,30 @@ class LoginView(APIView):
                 {"error": "Contraseña o Usuario inválidos"}, 
                 status=status.HTTP_401_UNAUTHORIZED
             )
+            '''
             # Example json 
-            #{
-            #    "username": "admin",
-            #    "password": "admin"
-            #}
-            
+            {
+                "username": "admin",
+                "password": "admin"
+            }
+            '''
+class NewUserView(APIView):
+    def post(self, request):
+        serializer = NewUser(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Usuario creado con éxito"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    '''
+        Ejemplo de json entrada
+        {
+            "username": "elmango",
+            "password": "elmango",
+            "email": "el@mango.com",
+            "first_name": "El",
+            "last_name": "Mango",
+            "tipo_usuario": "fotografo",
+            "sexo": "M"
+        }
+        '''
