@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
+from datetime import timedelta #Para sesiones
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -143,3 +144,21 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://localhost:3000",
 ]
+
+REST_FRAMEWORK = {# La parte de la seguridad que pregunta por el token
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated', # Bloquea a quien no tenga token
+    ),
+}
+
+SIMPLE_JWT = {#La configuracion de sesiones
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),#Configuracion del tiempo de la sesion
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),#El Refresh Token sirve para obtener uno nuevo sin pedir login
+    'ROTATE_REFRESH_TOKENS': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY, #Clave generada para firmar
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}

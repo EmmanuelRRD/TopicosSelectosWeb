@@ -1,3 +1,5 @@
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -30,6 +32,7 @@ class LoginView(APIView):
                 "password": "admin"
             }
             '''
+            
 class NewUserView(APIView):
     def post(self, request):
         serializer = NewUser(data=request.data)
@@ -50,3 +53,6 @@ class NewUserView(APIView):
             "sexo": "M"
         }
         '''
+        
+class MyTokenObtainPairView(TokenObtainPairView):
+    permission_classes = [AllowAny]
