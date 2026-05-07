@@ -5,12 +5,6 @@ from rest_framework.permissions import AllowAny #Para no pedir el token
 
 #Comfirmar si el usuario y contra correctas si no mandar un numero para marcar error creo era 200 y si si funciona mandar el id, tipo Usuario y  nombre
 
-class LoginCheck(serializers.ModelSerializer):
-    permission_classes = [AllowAny] #Para no pedir el token a este end point
-    class Meta:
-        model = Usuario
-        fields = ['id', 'username', 'tipo_usuario']
-
 class NewUser(serializers.ModelSerializer):
     permission_classes = [AllowAny] #Para no pedir el token a este end point
     password = serializers.CharField(write_only=True)
@@ -29,18 +23,17 @@ class NewUser(serializers.ModelSerializer):
             tipo_usuario=validated_data.get('tipo_usuario', 'cliente'), #Como es para clientes ponemos esa por defecto
             sexo=validated_data.get('sexo', 'N')
         )
+        
         return user
     
-class TokenPersonalizadoSerializer(TokenObtainPairSerializer):
+class LoginTokenSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
-        token = super().get_token(user)# Sacamos el token
+        token = super().get_token(user)
 
-        #Agregamos estos campos para no hacer tantas consultas y guardar esto de manera mas facil
+        # ESTO METE LOS DATOS DENTRO DEL TOKEN (Lo que verás en JWT.io)
         token['username'] = user.username
         token['tipo_usuario'] = user.tipo_usuario
         token['nombre_completo'] = f"{user.first_name} {user.last_name}"
 
         return token
-    
-    

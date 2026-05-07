@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 from datetime import timedelta #Para sesiones
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -162,3 +163,6 @@ SIMPLE_JWT = {#La configuracion de sesiones
     'SIGNING_KEY': SECRET_KEY, #Clave generada para firmar
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+MEDIA_URL = '/assets/' 
+MEDIA_ROOT = os.path.join(BASE_DIR,'home', 'assets')
