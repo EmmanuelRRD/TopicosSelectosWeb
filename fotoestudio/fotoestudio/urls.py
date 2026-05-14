@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from cliente.views import CitaViewSet, PaqueteViewSet, FotografoViewSet
+from cliente.views import CitaViewSet, PaqueteViewSet as PaqueteClienteViewSet, FotografoViewSet
+from fotografo.views import ProductoViewSet, PaqueteViewSet as PaqueteGestionViewSet, CalendarfoViewSet
 from login.views import NewUserView, LoginView
 from django.conf import settings
 from django.conf.urls.static import static
@@ -10,12 +11,14 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-
 router = routers.DefaultRouter()
 router.register(r'citas', CitaViewSet, basename='cita')
-router.register(r'paquetes', PaqueteViewSet)
+router.register(r'paquetes-cliente', FotografoViewSet, basename='paquete-cliente')
 router.register(r'fotografos', FotografoViewSet)
 
+router.register(r'productos', ProductoViewSet, basename='producto')
+router.register(r'paquetes-fotografo', PaqueteGestionViewSet, basename='paquete-fotografo')
+router.register(r'calendario-fotografos', CalendarfoViewSet, basename='calendario-fotografo')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
