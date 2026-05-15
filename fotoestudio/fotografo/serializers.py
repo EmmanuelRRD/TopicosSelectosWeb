@@ -4,9 +4,11 @@ from login.models import Usuario
 from cliente.models import Cita
 
 class ProductoSerializer(serializers.ModelSerializer):
+    creado_por = serializers.ReadOnlyField(source='creado_por.username')
+
     class Meta:
         model = Producto
-        fields = ['id', 'nombre', 'medida', 'precio']
+        fields = ['id', 'nombre', 'medida', 'precio', 'stock', 'creado_por']
 
 class DetallePaqueteSerializer(serializers.ModelSerializer):
     # Esto trae los datos del producto (nombre, medida) en lugar de solo el ID
@@ -25,16 +27,13 @@ class PaqueteSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre', 'descripcion', 'precio_paquete', 'contenido']
         
 class AgendaFotografoSerializer(serializers.ModelSerializer):
-    # Traemos datos del cliente para que el fotógrafo sepa quién es
-    cliente_nombre = serializers.ReadOnlyField(source='cliente.first_name')
-    cliente_apellido = serializers.ReadOnlyField(source='cliente.last_name')
+    cliente_nombre = serializers.ReadOnlyField(source='cliente.get_full_name')
     paquete_nombre = serializers.ReadOnlyField(source='paquete.nombre')
-
+    
     class Meta:
         model = Cita
         fields = [
-            'id', 'fecha_cita', 'lugar', 'notas', 
-            'precio_total', 'pagado', 
-            'cliente_nombre', 'cliente_apellido', 'paquete_nombre'
+            'id', 'cliente', 'cliente_nombre', 'paquete', 'paquete_nombre', 
+            'fotografo', 'fecha_cita', 'lugar', 'notas', 'precio_total', 'pagado'
         ]
         

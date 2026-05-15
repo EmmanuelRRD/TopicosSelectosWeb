@@ -8,27 +8,38 @@ from .serializers import (
 )
 from login.models import Usuario 
 
-class ProductoViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    Solo lectura: Clientes y Fotógrafos pueden ver los productos,
-    pero no crearlos ni borrarlos desde la API pública.
-    """
+class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-class PaqueteViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    Solo lectura: Permite ver los paquetes con su 'contenido' anidado.
-    """
+    def perform_create(self, serializer):
+        # Tomamos el usuario directamente del Token (request.user)
+        # Y le asignamos un stock por defecto si no viene en el JSON
+        serializer.save(
+            creado_por=self.request.user,
+            stock=self.request.data.get('stock', 0) 
+        )
+
+class PaqueteViewSet(viewsets.ModelViewSet):
     queryset = Paquete.objects.all()
     serializer_class = PaqueteSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticated()]
 
-class CalendarfoViewSet(viewsets.ReadOnlyModelViewSet):
+class CalendarfoViewSet(viewsets.ModelViewSet):
     serializer_class = AgendaFotografoSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:#Permisos para el admin
+            return [permissions.IsAdminUser()]
+        return [permissions.IsAuthenticated()]
 
     def get_queryset(self):
-        # Filtramos: Citas donde el fotografo_id sea el del usuario actual
-        return Cita.objects.filter(fotografo=self.request.user)
+        user = self.request.user
+        if user.is_staff:
+            return Cita.objects.all().order_by('fecha_cita')
+        return Cita.objects.filter(fotografo=user).order_by('fecha_cita')

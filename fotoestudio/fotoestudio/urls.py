@@ -3,7 +3,7 @@ from django.urls import path, include
 from rest_framework import routers
 from cliente.views import CitaViewSet, PaqueteViewSet as PaqueteClienteViewSet, FotografoViewSet
 from fotografo.views import ProductoViewSet, PaqueteViewSet as PaqueteGestionViewSet, CalendarfoViewSet
-from login.views import NewUserView, LoginView
+from login.views import NewUserView, LoginView, UsuariosViewSet
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import (
@@ -20,9 +20,10 @@ router.register(r'productos', ProductoViewSet, basename='producto')
 router.register(r'paquetes-fotografo', PaqueteGestionViewSet, basename='paquete-fotografo')
 router.register(r'calendario-fotografos', CalendarfoViewSet, basename='calendario-fotografo')
 
+router.register(r'usuarios', UsuariosViewSet, basename='usuarios')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
     #Endpoints del API
     path('api/', include(router.urls)),
     path('registro/', NewUserView.as_view(), name='registro'),

@@ -4,11 +4,23 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
-from .serializers import NewUser, LoginTokenSerializer
+from .serializers import NewUser, LoginTokenSerializer, UsuarioListSerializer
+from rest_framework import viewsets, permissions
+from .models import Usuario
           
 class NewUserView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [AllowAny] # Cualquiera puede "intentar" registrarse
+
     def post(self, request):
+        tipo_solicitado = request.data.get('tipo_usuario', 'cliente')
+        
+        if tipo_solicitado in ['admin', 'fotografo']:#Solo el admin los puede crear
+            if not request.user.is_authenticated or not request.user.is_staff:
+                return Response(
+                    {"error": "No tienes permiso para crear usuarios de este tipo."},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
         serializer = NewUser(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -38,3 +50,18 @@ class LoginView(TokenObtainPairView):
 "password": "admin"
 }
 '''
+
+class UsuariosViewSet(viewsets.ModelViewSet):
+    queryset = Usuario.objects.all().order_by('-id') # Los más nuevos primero
+    serializer_class = UsuarioListSerializer
+    
+    # REGLA DE ORO: Solo el Admin (is_staff) puede entrar a este ViewSet
+    permission_classes = [permissions.IsAdminUser]
+
+    def get_queryset(self):
+        # Opcional: Podrías permitir que el admin filtre por tipo 
+        # ejemplo: /api/usuarios/?tipo=fotografo
+        tipo = self.request.query_params.get('tipo')
+        if tipo:
+            return self.queryset.filter(tipo_usuario=tipo)
+        return self.queryset
