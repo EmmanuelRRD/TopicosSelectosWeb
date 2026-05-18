@@ -28,16 +28,25 @@ function Login() {
       const data = await response.json();
 
       if (response.ok) {
+        // 1. Guardamos todo en el localStorage como ya lo haces
         localStorage.setItem('access_token', data.access);
         localStorage.setItem('refresh_token', data.refresh);
-
         localStorage.setItem('tipo_usuario', data.tipo_usuario);
-        localStorage.setItem('is_staff', data.is_staff); 
+        localStorage.setItem('is_staff', data.is_staff);
         localStorage.setItem('nombre_completo', data.nombre_completo);
 
         console.log(`¡Sesión iniciada con éxito! Bienvenido ${data.nombre_completo}`);
 
-        navigate('/citas');
+        // 2. 🔥 REDIRECCIÓN DINÁMICA DE ENTRADA 🔥
+        // Evaluamos directamente el campo que mandó Django en la respuesta
+        if (data.is_staff === true) {
+          console.log("Detectado como Admin: Despachando a /dashboard");
+          navigate('/dashboard');
+        } else {
+          console.log(`Detectado como ${data.tipo_usuario}: Despachando a /citas`);
+          navigate('/citas');
+        }
+
       } else {
         setError(data.detail || "Usuario o contraseña incorrectos");
       }
