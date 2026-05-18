@@ -1,118 +1,146 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import DashboardProductos from './DashboardProductos'; // Importamos tu sección limpia
+// Aquí importarías tus otras subsecciones cuando las tengas listas:
+// import DashboardClientes from './DashboardClientes';
 
-const Dashboard = () => {
-  // Datos simulados
-  const stats = [
-    { 
-      name: 'Citas Hoy', 
-      value: '4', 
-      icon: <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> 
-    },
-    { 
-      name: 'Galería', 
-      value: '124 fotos', 
-      icon: <svg className="w-6 h-6 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> 
-    },
-    { 
-      name: 'Clientes', 
-      value: '58', 
-      icon: <svg className="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg> 
-    },
-    { 
-      name: 'Sesiones Mes', 
-      value: '12', 
-      icon: <svg className="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg> 
-    },
-  ];
+function Dashboard() {
+    const navigate = useNavigate();
+    const [pestanaActiva, setPestanaActiva] = useState('inicio');
+    const nombreAdmin = localStorage.getItem('nombre_completo') || 'Administrador';
 
-  return (
-    <div className="flex h-screen bg-zinc-950 text-zinc-100 font-sans overflow-hidden">
-      
-      {/* SIDEBAR */}
-      <aside className="w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col hidden lg:flex">
-        <div className="p-8">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-black text-white shadow-lg shadow-blue-900/20">F</div>
-            <span className="text-xl font-bold tracking-tighter uppercase">Jerez Admin</span>
-          </Link>
-        </div>
+    const cerrarSesion = () => {
+        if (window.confirm("¿Deseas salir del panel administrativo?")) {
+            localStorage.clear();
+            navigate('/login');
+        }
+    };
 
-        <nav className="flex-1 px-4 space-y-1">
-          <p className="text-[10px] uppercase tracking-widest text-zinc-600 font-bold mb-4 px-4">Menú</p>
-          
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-900/20 transition-all">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
-            <span className="text-sm font-semibold">Dashboard</span>
-          </button>
-
-          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-zinc-400 hover:bg-zinc-800 hover:text-white transition-all">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-            <span className="text-sm font-semibold">Agenda</span>
-          </button>
-        </nav>
-
-        <div className="p-4 border-t border-zinc-800">
-          <Link to="/login" className="flex items-center gap-3 px-4 py-3 text-zinc-500 hover:text-red-400 transition-colors">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
-            <span className="text-sm font-bold">Salir</span>
-          </Link>
-        </div>
-      </aside>
-
-      {/* MAIN CONTENT */}
-      <main className="flex-1 overflow-y-auto p-6 md:p-10">
-        <header className="flex justify-between items-center mb-10">
-          <div>
-            <h1 className="text-3xl font-black text-white">Panel de Control</h1>
-            <p className="text-zinc-500 text-sm italic">8vo Semestre - Ingeniería en Sistemas</p>
-          </div>
-          <div className="w-10 h-10 bg-zinc-800 rounded-full border border-zinc-700"></div>
-        </header>
-
-        {/* STATS */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {stats.map((stat) => (
-            <div key={stat.name} className="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl">
-              <div className="mb-4">{stat.icon}</div>
-              <p className="text-zinc-500 text-[10px] uppercase font-black tracking-widest">{stat.name}</p>
-              <h3 className="text-2xl font-black text-white">{stat.value}</h3>
-            </div>
-          ))}
-        </div>
-
-        {/* WORK AREA */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-           <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
-              <h3 className="text-lg font-bold mb-4 text-blue-500">Sesiones Próximas</h3>
-              <div className="space-y-4">
-                 <div className="p-4 bg-zinc-950 rounded-2xl border border-zinc-800 flex justify-between">
-                    <span className="text-sm font-medium">Boda García</span>
-                    <span className="text-xs text-zinc-500">25/04/2026</span>
-                 </div>
-                 <div className="p-4 bg-zinc-950 rounded-2xl border border-zinc-800 flex justify-between">
-                    <span className="text-sm font-medium">XV de María</span>
-                    <span className="text-xs text-zinc-500">27/04/2026</span>
-                 </div>
-              </div>
-           </div>
-
-           <div className="bg-blue-600 rounded-3xl p-8 text-white relative overflow-hidden">
-              <div className="relative z-10">
-                <h3 className="text-xl font-black mb-2 text-white">Acciones Rápidas</h3>
-                <p className="text-blue-100 text-xs mb-6">Gestionar inventario y clientes</p>
-                <div className="grid grid-cols-2 gap-3">
-                  <button className="bg-white/10 hover:bg-white/20 p-4 rounded-2xl text-xs font-bold transition-all">Nueva Cita</button>
-                  <button className="bg-white/10 hover:bg-white/20 p-4 rounded-2xl text-xs font-bold transition-all">Subir Foto</button>
+    return (
+        <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans flex flex-col md:flex-row">
+            
+            {/* BARRA LATERAL (Sidebar) */}
+            <aside className="w-full md:w-64 bg-zinc-900 border-b md:border-b-0 md:border-r border-zinc-800 flex flex-col p-6 shrink-0">
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="w-10 h-10 bg-blue-600 rounded-full italic flex items-center justify-center font-black text-white text-lg">F</div>
+                    <div>
+                        <span className="text-xl font-black tracking-tight block uppercase">Estudio Jerez</span>
+                        <span className="text-[10px] text-blue-500 uppercase tracking-widest font-bold">Panel de Control</span>
+                    </div>
                 </div>
-              </div>
-              <div className="absolute -right-8 -bottom-8 opacity-10">
-                <svg className="w-32 h-32" fill="currentColor" viewBox="0 0 24 24"><path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /></svg>
-              </div>
-           </div>
+
+                {/* MENÚ DE SECCIONES */}
+                <nav className="space-y-2 flex-1">
+                    <button 
+                        onClick={() => setPestanaActiva('inicio')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${pestanaActiva === 'inicio' ? 'bg-blue-600 text-white shadow-lg shadow-blue-950/40' : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
+                    >
+                        <span>📊</span> Métricas Generales
+                    </button>
+                    
+                    <button 
+                        onClick={() => setPestanaActiva('productos')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${pestanaActiva === 'productos' ? 'bg-blue-600 text-white shadow-lg shadow-blue-950/40' : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
+                    >
+                        <span>📦</span> Inventario e Insumos
+                    </button>
+
+                    <button 
+                        onClick={() => navigate('/citas')} // Redirige directo a tu sistema ABCC completo de citas
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-all text-left"
+                    >
+                        <span>📅</span> Gestionar Citas (ABCC)
+                    </button>
+                </nav>
+
+                {/* FOOTER DEL SIDEBAR */}
+                <div className="mt-auto pt-6 border-t border-zinc-800 flex items-center justify-between gap-2">
+                    <div className="truncate">
+                        <p className="text-xs font-bold text-white truncate">{nombreAdmin}</p>
+                        <p className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Root Admin</p>
+                    </div>
+                    <button 
+                        onClick={cerrarSesion}
+                        className="p-2.5 bg-zinc-800 hover:bg-red-950/40 border border-zinc-700 hover:border-red-900 text-zinc-400 hover:text-red-400 rounded-xl transition-colors text-sm"
+                        title="Cerrar sesión"
+                    >
+                        🚪
+                    </button>
+                </div>
+            </aside>
+
+            {/* CONTENIDO PRINCIPAL */}
+            <main className="flex-1 p-6 md:p-10 overflow-y-auto">
+                
+                {/* 1. SECCIÓN: INICIO (Métricas de negocio rápidas) */}
+                {pestanaActiva === 'inicio' && (
+                    <div className="space-y-8">
+                        <div>
+                            <h2 className="text-3xl font-black text-white tracking-tight">Bienvenido de vuelta, {nombreAdmin.split(' ')[0]}</h2>
+                            <p className="text-sm text-zinc-400 mt-1">Este es el estado operativo de tu sucursal en tiempo real.</p>
+                        </div>
+
+                        {/* Tarjetas de Datos de MySQL simuladas */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-xl">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-2xl">💰</span>
+                                    <span className="text-[10px] bg-green-500/10 text-green-400 px-2 py-0.5 border border-green-500/20 rounded font-black font-mono">Este mes</span>
+                                </div>
+                                <p className="text-2xl font-mono font-black text-white mt-4">$24,500.00</p>
+                                <p className="text-xs text-zinc-500 mt-1 font-medium">Ingresos Totales en Caja</p>
+                            </div>
+
+                            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-xl">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-2xl">📸</span>
+                                    <span className="text-[10px] bg-blue-500/10 text-blue-400 px-2 py-0.5 border border-blue-500/20 rounded font-black uppercase font-mono">Activos</span>
+                                </div>
+                                p.text-2xl.font-mono.font-black.text-white.mt-4 3 Citas hoy
+                                <p className="text-xs text-zinc-500 mt-1 font-medium">Agenda del estudio activa</p>
+                            </div>
+
+                            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-xl">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-2xl">📦</span>
+                                    <span className="text-[10px] bg-orange-500/10 text-orange-400 px-2 py-0.5 border border-orange-500/20 rounded font-black uppercase font-mono">Alerta</span>
+                                </div>
+                                <p className="text-2xl font-mono font-black text-white mt-4">2 Insumos bajos</p>
+                                <p className="text-xs text-zinc-500 mt-1 font-medium">Productos con stock crítico</p>
+                            </div>
+
+                            <div className="bg-zinc-900 border border-zinc-800 p-5 rounded-2xl shadow-xl">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-2xl">👥</span>
+                                    <span className="text-[10px] bg-purple-500/10 text-purple-400 px-2 py-0.5 border border-purple-500/20 rounded font-black uppercase font-mono">Total</span>
+                                </div>
+                                <p className="text-2xl font-mono font-black text-white mt-4">124 Clientes</p>
+                                <p className="text-xs text-zinc-500 mt-1 font-medium">Usuarios registrados en DB</p>
+                            </div>
+                        </div>
+
+                        {/* Banner publicitario o de aviso del sistema */}
+                        <div className="p-6 bg-gradient-to-r from-blue-900/30 to-indigo-900/10 border border-blue-800/40 rounded-3xl flex items-center justify-between">
+                            <div className="max-w-md">
+                                <h4 className="text-lg font-bold text-blue-200">¿Listo para auditar la base de datos?</h4>
+                                <p className="text-xs text-blue-300/80 mt-1">Recuerda que tienes los privilegios del superusuario para modificar catálogos globales del servidor.</p>
+                            </div>
+                            <button 
+                                onClick={() => setPestanaActiva('productos')}
+                                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 font-bold rounded-xl text-xs transition-colors shadow-md shadow-blue-950/50 cursor-pointer"
+                            >
+                                Revisar Almacén →
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* 2. SECCIÓN: COMPONENTE SEPARADO DE PRODUCTOS */}
+                {pestanaActiva === 'productos' && <DashboardProductos />}
+
+            </main>
         </div>
-      </main>
-    </div>
-  );
-};
+    );
+}
 
 export default Dashboard;

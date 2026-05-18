@@ -1,25 +1,30 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, filters
 from .models import Producto, Paquete, DetallePaquete
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from login.models import Usuario 
 from cliente.models import Cita
 from .serializers import (
     ProductoSerializer, 
     PaqueteSerializer,
     AgendaFotografoSerializer
 )
-from login.models import Usuario 
 
 class ProductoViewSet(viewsets.ModelViewSet):
-    queryset = Producto.objects.all()
+    queryset = Producto.objects.all().order_by('-id')
     serializer_class = ProductoSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['nombre', 'medida']
 
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
+    
     def perform_create(self, serializer):
-        # Tomamos el usuario directamente del Token (request.user)
-        # Y le asignamos un stock por defecto si no viene en el JSON
-        serializer.save(
-            creado_por=self.request.user,
-            stock=self.request.data.get('stock', 0) 
-        )
+        serializer.save(creado_por=self.request.user)
 
 class PaqueteViewSet(viewsets.ModelViewSet):
     queryset = Paquete.objects.all()
