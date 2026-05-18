@@ -43,9 +43,32 @@ class LoginTokenSerializer(TokenObtainPairSerializer):
         return data
 
 class UsuarioListSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=False)
+
     class Meta:
         model = Usuario
         fields = [
             'id', 'username', 'email', 'first_name', 
-            'last_name', 'tipo_usuario', 'is_staff', 'is_active'
+            'last_name', 'tipo_usuario', 'is_staff', 'is_active', 
+            'password'
         ]
+
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        # Crea el usuario en memoria con los campos validados
+        usuario = super().create(validated_data)
+        
+        if password:
+            usuario.set_password(password) #Se convierte
+            usuario.save()
+        return usuario
+
+    # 🔥 ESTO ENCRIPTA AL EDITAR DESDE EL DASHBOARD 🔥
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        usuario = super().update(instance, validated_data)
+        
+        if password:
+            usuario.set_password(password)
+            usuario.save()
+        return usuario

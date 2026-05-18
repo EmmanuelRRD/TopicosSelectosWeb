@@ -9,12 +9,12 @@ from rest_framework import viewsets, permissions
 from .models import Usuario
           
 class NewUserView(APIView):
-    permission_classes = [AllowAny] # Cualquiera puede "intentar" registrarse
+    permission_classes = [AllowAny] 
 
     def post(self, request):
         tipo_solicitado = request.data.get('tipo_usuario', 'cliente')
         
-        if tipo_solicitado in ['admin', 'fotografo']:#Solo el admin los puede crear
+        if tipo_solicitado in ['admin', 'fotografo']:
             if not request.user.is_authenticated or not request.user.is_staff:
                 return Response(
                     {"error": "No tienes permiso para crear usuarios de este tipo."},
@@ -23,7 +23,15 @@ class NewUserView(APIView):
 
         serializer = NewUser(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            # 1. Creamos la instancia del usuario en memoria temporal
+            usuario = serializer.save()
+            
+            # 2. 🔥 EXTRAEMOS LA CONTRASEÑA Y LA ENCRIPTAMOS DIRECTO A MYSQL 🔥
+            password = request.data.get('password', None)
+            if password:
+                usuario.set_password(password) # <-- Esto genera el Hash de Django
+                usuario.save()
+                
             return Response({"message": "Usuario creado con éxito"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -52,16 +60,28 @@ class LoginView(TokenObtainPairView):
 '''
 
 class UsuariosViewSet(viewsets.ModelViewSet):
-    queryset = Usuario.objects.all().order_by('-id') # Los más nuevos primero
     serializer_class = UsuarioListSerializer
     
-    # REGLA DE ORO: Solo el Admin (is_staff) puede entrar a este ViewSet
     permission_classes = [permissions.IsAdminUser]
 
     def get_queryset(self):
-        # Opcional: Podrías permitir que el admin filtre por tipo 
-        # ejemplo: /api/usuarios/?tipo=fotografo
+        base_queryset = Usuario.objects.all().order_by('-id')
+        
         tipo = self.request.query_params.get('tipo')
         if tipo:
-            return self.queryset.filter(tipo_usuario=tipo)
-        return self.queryset
+            return base_queryset.filter(tipo_usuario=tipo)
+        return base_queryset
+
+    def perform_create(self, serializer):
+        # Guarda la instancia inicial en memoria
+        usuario = serializer.save()
+        password = self.request.data.get('password', None)
+        if password:
+            usuario.save()
+
+    def perform_update(self, serializer):
+        usuario = serializer.save()
+        password = self.request.data.get('password', None)
+        if password:
+            usuario.set_password(password) # <-- Si el admin le cambia la clave, también se encripta
+            usuario.save()

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const GestionCitas = () => {
+const GestionCitas = ({ esComponenteAdmin = false }) => {
     const navigate = useNavigate();
     const [citas, setCitas] = useState([]);
     const [paquetes, setPaquetes] = useState([]);

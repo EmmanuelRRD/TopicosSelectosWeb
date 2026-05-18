@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import DashboardProductos from './DashboardProductos'; // Importamos tu sección limpia
-// Aquí importarías tus otras subsecciones cuando las tengas listas:
-// import DashboardClientes from './DashboardClientes';
+import DashboardProductos from './DashboardProductos';
+import DashboardFotografos from './DashboardFotografos';
+import DashboardPaquetes from './DashboardPaquetes';
+import DashboardUsuarios from './DashboardUsuarios';
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -18,7 +19,7 @@ function Dashboard() {
 
     return (
         <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans flex flex-col md:flex-row">
-            
+
             {/* BARRA LATERAL (Sidebar) */}
             <aside className="w-full md:w-64 bg-zinc-900 border-b md:border-b-0 md:border-r border-zinc-800 flex flex-col p-6 shrink-0">
                 <div className="flex items-center gap-3 mb-8">
@@ -31,26 +32,49 @@ function Dashboard() {
 
                 {/* MENÚ DE SECCIONES */}
                 <nav className="space-y-2 flex-1">
-                    <button 
+                    <button
                         onClick={() => setPestanaActiva('inicio')}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${pestanaActiva === 'inicio' ? 'bg-blue-600 text-white shadow-lg shadow-blue-950/40' : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
                     >
                         <span>📊</span> Métricas Generales
                     </button>
-                    
-                    <button 
+
+                    <button
                         onClick={() => setPestanaActiva('productos')}
                         className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${pestanaActiva === 'productos' ? 'bg-blue-600 text-white shadow-lg shadow-blue-950/40' : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
                     >
                         <span>📦</span> Inventario e Insumos
                     </button>
 
-                    <button 
+                    <button
+                        onClick={() => setPestanaActiva('fotografos')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${pestanaActiva === 'fotografos' ? 'bg-blue-600 text-white shadow-lg' : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
+                    >
+                        <span>📸</span> Plantilla de Staff
+                    </button>
+
+                    <button
+                        onClick={() => setPestanaActiva('paquetes')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${pestanaActiva === 'paquetes' ? 'bg-blue-600 text-white shadow-lg' : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
+                    >
+                        <span>🏷️</span> Paquetes de Estudio
+                    </button>
+
+                    <button
+                        onClick={() => setPestanaActiva('usuarios')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${pestanaActiva === 'usuarios' ? 'bg-blue-600 text-white shadow-lg' : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
+                    >
+                        <span>👥</span> Control de Usuarios
+                    </button>
+
+                    <button
                         onClick={() => navigate('/citas')} // Redirige directo a tu sistema ABCC completo de citas
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-all text-left"
                     >
                         <span>📅</span> Gestionar Citas (ABCC)
                     </button>
+
+
                 </nav>
 
                 {/* FOOTER DEL SIDEBAR */}
@@ -59,7 +83,7 @@ function Dashboard() {
                         <p className="text-xs font-bold text-white truncate">{nombreAdmin}</p>
                         <p className="text-[10px] text-zinc-500 font-medium uppercase tracking-wider">Root Admin</p>
                     </div>
-                    <button 
+                    <button
                         onClick={cerrarSesion}
                         className="p-2.5 bg-zinc-800 hover:bg-red-950/40 border border-zinc-700 hover:border-red-900 text-zinc-400 hover:text-red-400 rounded-xl transition-colors text-sm"
                         title="Cerrar sesión"
@@ -71,7 +95,7 @@ function Dashboard() {
 
             {/* CONTENIDO PRINCIPAL */}
             <main className="flex-1 p-6 md:p-10 overflow-y-auto">
-                
+
                 {/* 1. SECCIÓN: INICIO (Métricas de negocio rápidas) */}
                 {pestanaActiva === 'inicio' && (
                     <div className="space-y-8">
@@ -125,7 +149,7 @@ function Dashboard() {
                                 <h4 className="text-lg font-bold text-blue-200">¿Listo para auditar la base de datos?</h4>
                                 <p className="text-xs text-blue-300/80 mt-1">Recuerda que tienes los privilegios del superusuario para modificar catálogos globales del servidor.</p>
                             </div>
-                            <button 
+                            <button
                                 onClick={() => setPestanaActiva('productos')}
                                 className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 font-bold rounded-xl text-xs transition-colors shadow-md shadow-blue-950/50 cursor-pointer"
                             >
@@ -135,8 +159,11 @@ function Dashboard() {
                     </div>
                 )}
 
-                {/* 2. SECCIÓN: COMPONENTE SEPARADO DE PRODUCTOS */}
+                {/* Secciones del dash */}
                 {pestanaActiva === 'productos' && <DashboardProductos />}
+                {pestanaActiva === 'fotografos' && <DashboardFotografos />}
+                {pestanaActiva === 'paquetes' && <DashboardPaquetes />}
+                {pestanaActiva === 'usuarios' && <DashboardUsuarios />}
 
             </main>
         </div>
