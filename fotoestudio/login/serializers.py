@@ -3,8 +3,6 @@ from .models import Usuario
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.permissions import AllowAny #Para no pedir el token
 
-#Comfirmar si el usuario y contra correctas si no mandar un numero para marcar error creo era 200 y si si funciona mandar el id, tipo Usuario y  nombre
-
 class NewUser(serializers.ModelSerializer):
     class Meta:
         model = Usuario
@@ -12,7 +10,7 @@ class NewUser(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        tipo = validated_data.get('tipo_usuario', 'cliente')#Si no se mando un tipo de usuario es cliente
+        tipo = validated_data.get('tipo_usuario', 'cliente')
         
         user = Usuario.objects.create_user(
             username=validated_data['username'],
@@ -30,18 +28,19 @@ class NewUser(serializers.ModelSerializer):
             user.save()
             
         return user
-    
+
 class LoginTokenSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-
-        # ESTO METE LOS DATOS DENTRO DEL TOKEN (Lo que verás en JWT.io)
-        token['username'] = user.username
-        token['tipo_usuario'] = user.tipo_usuario
-        token['nombre_completo'] = f"{user.first_name} {user.last_name}"
-
-        return token
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        user = self.user
+        
+        nombre_completo = f"{user.first_name} {user.last_name}".strip()
+        
+        data['tipo_usuario'] = user.tipo_usuario
+        data['is_staff'] = user.is_staff
+        data['nombre_completo'] = nombre_completo if nombre_completo else "Usuario sin nombre"
+        
+        return data
 
 class UsuarioListSerializer(serializers.ModelSerializer):
     class Meta:

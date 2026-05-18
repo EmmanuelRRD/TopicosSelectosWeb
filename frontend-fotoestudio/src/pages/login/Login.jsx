@@ -1,13 +1,52 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  // Inicializamos las credenciales con 'username' para que Django lo entienda directo
+  const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [error, setError] = useState(null);
+  const [cargando, setCargando] = useState(false);
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setCargando(true);
+
     console.log("Intentando conectar con Django...", credentials);
-    // Aquí irá tu lógica de autenticación más adelante
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(credentials), // Envía username y password
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('access_token', data.access);
+        localStorage.setItem('refresh_token', data.refresh);
+
+        localStorage.setItem('tipo_usuario', data.tipo_usuario);
+        localStorage.setItem('is_staff', data.is_staff); 
+        localStorage.setItem('nombre_completo', data.nombre_completo);
+
+        console.log(`¡Sesión iniciada con éxito! Bienvenido ${data.nombre_completo}`);
+
+        navigate('/citas');
+      } else {
+        setError(data.detail || "Usuario o contraseña incorrectos");
+      }
+    } catch (err) {
+      console.error("Error de red:", err);
+      setError("No se pudo conectar con el servidor. ¿Está prendido el backend?");
+    } finally {
+      setCargando(false);
+    }
   };
 
   return (
@@ -22,36 +61,46 @@ function Login() {
           <h2 className="text-zinc-400 mt-4 font-medium">Panel Administrativo</h2>
         </div>
 
-        {/* Card de Login */}
+        {/*Login */}
         <div className="bg-zinc-900 border border-zinc-800 p-8 rounded-3xl shadow-2xl">
+
+          {error && (
+            <div className="mb-6 bg-red-900/50 border border-red-500 text-red-200 text-sm p-4 rounded-xl font-medium">
+              ⚠️ {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-bold mb-2 text-zinc-300">Correo Electrónico</label>
-              <input 
-                type="email" 
+              <label className="block text-sm font-bold mb-2 text-zinc-300">Nombre de Usuario o Correo</label>
+              <input
+                type="text"
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 transition-colors text-white"
-                placeholder="nombre@ejemplo.com"
-                onChange={(e) => setCredentials({...credentials, email: e.target.value})}
+                placeholder="ej. elmango"
+                onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
                 required
+                disabled={cargando}
               />
             </div>
 
             <div>
               <label className="block text-sm font-bold mb-2 text-zinc-300">Contraseña</label>
-              <input 
-                type="password" 
+              <input
+                type="password"
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-600 transition-colors text-white"
                 placeholder="••••••••"
-                onChange={(e) => setCredentials({...credentials, password: e.target.value})}
+                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
                 required
+                disabled={cargando}
               />
             </div>
 
-            <button 
+            <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-900/20 cursor-pointer"
+              disabled={cargando}
+              className={`w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-blue-900/20 cursor-pointer ${cargando ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              Iniciar Sesión
+              {cargando ? 'Validando...' : 'Iniciar Sesión'}
             </button>
           </form>
 
@@ -60,7 +109,7 @@ function Login() {
           </div>
 
           <div className="mt-8 text-center text-sm text-zinc-500">
-            <p>No tienes cuenta? <a href="/#/Register" className="text-white">Crea una.</a></p>
+            <p>¿No tienes cuenta? <Link to="/Register" className="text-white hover:underline">Crea una.</Link></p>
           </div>
         </div>
 
