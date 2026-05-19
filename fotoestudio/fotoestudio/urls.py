@@ -3,7 +3,7 @@ from django.urls import path, include
 from rest_framework import routers
 from cliente.views import CitaViewSet, PaqueteViewSet as PaqueteClienteViewSet, FotografoViewSet
 from fotografo.views import ProductoViewSet, PaqueteViewSet as PaqueteGestionViewSet, CalendarfoViewSet
-from login.views import NewUserView, LoginView, UsuariosViewSet
+from login.views import NewUserView, LoginView, UsuarioListView, UsuariosViewSet
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework_simplejwt.views import (

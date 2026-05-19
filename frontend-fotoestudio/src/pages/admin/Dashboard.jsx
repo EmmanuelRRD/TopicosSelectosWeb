@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Citas from '../citas/citas-all';
 import DashboardProductos from './DashboardProductos';
 import DashboardFotografos from './DashboardFotografos';
 import DashboardPaquetes from './DashboardPaquetes';
 import DashboardUsuarios from './DashboardUsuarios';
+
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -68,10 +70,10 @@ function Dashboard() {
                     </button>
 
                     <button
-                        onClick={() => navigate('/citas')} // Redirige directo a tu sistema ABCC completo de citas
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 transition-all text-left"
+                        onClick={() => setPestanaActiva('citasAdmin')}
+                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${pestanaActiva === 'citasAdmin' ? 'bg-blue-600 text-white shadow-lg' : 'text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200'}`}
                     >
-                        <span>📅</span> Gestionar Citas (ABCC)
+                        <span>📅</span> Citas de la Sucursal
                     </button>
 
 
@@ -164,6 +166,7 @@ function Dashboard() {
                 {pestanaActiva === 'fotografos' && <DashboardFotografos />}
                 {pestanaActiva === 'paquetes' && <DashboardPaquetes />}
                 {pestanaActiva === 'usuarios' && <DashboardUsuarios />}
+                {pestanaActiva === 'citasAdmin' && <Citas esComponenteAdmin={true} />}
 
             </main>
         </div>
